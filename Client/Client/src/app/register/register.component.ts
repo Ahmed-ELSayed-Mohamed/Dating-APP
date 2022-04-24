@@ -1,7 +1,8 @@
 import { AccountService } from 'src/app/Services/account.service';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { User } from '../Models/User';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
@@ -10,19 +11,24 @@ import { User } from '../Models/User';
 })
 export class RegisterComponent implements OnInit {
   @Output() cancelRegister = new EventEmitter();
+  @Input() removecom: boolean;
   model: any = {};
 
-  constructor(private accountservice: AccountService) {}
+  constructor(
+    private accountservice: AccountService,
+    private toast: ToastrService
+  ) {}
 
   ngOnInit() {}
 
   register() {
+    this.removecom = false;
     this.accountservice.register(this.model).subscribe(
       (response) => {
         console.log(response);
       },
       (error) => {
-        console.log(error);
+        this.toast.error(error.error);
       }
     );
   }
